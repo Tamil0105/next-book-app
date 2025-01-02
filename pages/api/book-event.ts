@@ -55,13 +55,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     };
 
     // Insert the event into the calendar
-    //@ts-ignore
+    //@ts-expect-error
     const createdEvent = await calendar.events.insert({
       calendarId: "primary",
       resource: calendarEvent,
     });
 
-    //@ts-ignore
+    //@ts-expect-error
     res.status(201).json({ createdEvent: createdEvent.data });
   } catch (error: any) {
     if (error.code === 401) {
@@ -70,13 +70,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { credentials } = await auth.refreshAccessToken();
         auth.setCredentials(credentials);
 
-        //@ts-ignore
+        //@ts-expect-error
         const retryEvent = await calendar.events.insert({
           calendarId: "primary",
           resource: event,
         });
 
-        //@ts-ignore
+        //@ts-expect-error
         return res.status(201).json({ createdEvent: retryEvent.data });
       } catch (refreshError: any) {
         console.error("Error refreshing token:", refreshError);

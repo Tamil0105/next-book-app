@@ -4,8 +4,8 @@ import Modal from "./modal";
 const EventList = () => {
   const [events, setEvents] = useState<any[]>([]);
   const [date, setDate] = useState<Dayjs | null>(null);
-  const [__, setAvailableSlots] = useState<{ start: string; end: string }[]>([]);
-  const [___, setBookedSlots] = useState<{ start: string; end: string }[]>([]);
+  // const [availableSlots, setAvailableSlots] = useState<{ start: string; end: string }[]>([]);
+  // const [bookedSlots, setBookedSlots] = useState<{ start: string; end: string }[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<{ start: string; end: string } | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -56,8 +56,8 @@ const EventList = () => {
     }
 
     setLoading(true); // Start loading
-    // const timeMin = date.startOf("day").toISOString(); 
-    // const timeMax = date.endOf("day").toISOString();
+    // const timeMin = date.startOf("day").toISOString(); // Start of the day
+    // const timeMax = date.endOf("day").toISOString(); // End of the day
 
     // Generate slots for the day (7 AM to 6 PM)
     const allDaySlots = generateDailySlots(date);
@@ -72,8 +72,8 @@ const EventList = () => {
         )
     );
    console.log(freeSlots.length,)
-    setAvailableSlots(freeSlots);
-    setBookedSlots(events);
+    // setAvailableSlots(freeSlots);
+    // setBookedSlots(events);
     setLoading(false); // End loading
   };
 

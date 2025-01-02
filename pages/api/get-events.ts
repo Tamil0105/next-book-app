@@ -42,7 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       singleEvents: true,
       orderBy: "startTime",
     });
-    //@ts-ignore
+    //@ts-expect-error
  const busySlots = response.data.calendars["primary"].busy || [];
 
     // Parse input time range
@@ -60,7 +60,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Filter out intervals that overlap with busy slots
     const availableSlots = intervals.filter((interval) => {
-      //@ts-ignore
+      //@ts-expect-error
       return !busySlots.some((busy: { start: string; end: string }) => {
         const busyStart = new Date(busy.start).getTime();
         const busyEnd = new Date(busy.end).getTime();

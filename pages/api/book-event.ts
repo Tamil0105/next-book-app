@@ -41,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     // Prepare event details
-    const attendees = event.guests?.map((guest:any) => ({
+    const attendees = event.guests?.map((guest:{email:string,phone:string}) => ({
       email: guest.email,
       comment: guest.phone ? `Phone: ${guest.phone}` : undefined,
     }));
@@ -55,35 +55,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     };
 
     // Insert the event into the calendar
-    //@ts-expect-error
-    const createdEvent = await calendar.events.insert({
+    const createdEvent = await (calendar as any).events.insert({
       calendarId: "primary",
       resource: calendarEvent,
     });
 
-    //@ts-expect-error
     res.status(201).json({ createdEvent: createdEvent.data });
-  } catch (error: any) {
-    if (error.code === 401) {
+  } catch (error: unknown) {
+    if ((error as any).code === 401) {
       try {
         // Refresh the token and retry the request
         const { credentials } = await auth.refreshAccessToken();
         auth.setCredentials(credentials);
 
-        //@ts-expect-error
-        const retryEvent = await calendar.events.insert({
+        const retryEvent = await (calendar as any).events.insert({
           calendarId: "primary",
           resource: event,
         });
 
-        //@ts-expect-error
         return res.status(201).json({ createdEvent: retryEvent.data });
-      } catch (refreshError: any) {
+      } catch (refreshError: unknown) {
         console.error("Error refreshing token:", refreshError);
         return res.status(500).json({ error: "Failed to refresh access token." });
       }
     }
-    console.error("Error creating event:", error.response);
-    return res.status(500).json({ error: error.response });
+    console.error("Error creating event:", (error as any).response);
+    return res.status(500).json({ error: (error as any).response });
   }
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import Modal from "./modal";
 const EventList = () => {
-  const [events, setEvents] = useState<any[]>([]);
+  const [events, setEvents] = useState([]);
   const [date, setDate] = useState<Dayjs | null>(null);
   // const [availableSlots, setAvailableSlots] = useState<{ start: string; end: string }[]>([]);
   // const [bookedSlots, setBookedSlots] = useState<{ start: string; end: string }[]>([]);
@@ -66,9 +66,9 @@ const EventList = () => {
     const freeSlots = allDaySlots.filter(
       (slot) =>
         !events.some(
-          (busy: any) =>
-            dayjs(busy.start).isBefore(dayjs(slot.end)) &&
-            dayjs(busy.end).isAfter(dayjs(slot.start))
+          (busy :{start:string,end:string}) =>
+            dayjs((busy).start).isBefore(dayjs(slot.end)) &&
+            dayjs((busy).end).isAfter(dayjs(slot.start))
         )
     );
    console.log(freeSlots.length,)
@@ -148,7 +148,7 @@ const EventList = () => {
           <div className="py-5 px-10 ">
           <h2 className="text-lg font-semibold mb-4">Available Slots</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {events.map((slot, index) => (
+            {events.map((slot:{start:string,end:string}, index) => (
               <div
                 key={index}
                 className="py-4 px-6 border rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 cursor-pointer transition-all duration-200"
@@ -158,7 +158,7 @@ const EventList = () => {
                 }}
               >
                 <p className="text-sm font-medium text-gray-600">
-                  {dayjs(slot.start).format("hh:mm A")} - {dayjs(slot.end).format("hh:mm A")}
+                  {dayjs((slot).start).format("hh:mm A")} - {dayjs((slot).end).format("hh:mm A")}
                 </p>
               </div>
             ))}

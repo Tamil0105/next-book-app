@@ -9,7 +9,7 @@ interface ModalProps {
     phoneNumber: string,
     location: string,
     paymentMethod: string,
-    paymentDetails: any
+    paymentDetails: unknown
   ) => void;
 }
 

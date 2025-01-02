@@ -60,10 +60,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Filter out intervals that overlap with busy slots
     const availableSlots = intervals.filter((interval) => {
-      //@ts-expect-error
-      return !busySlots.some((busy: { start: string; end: string }) => {
-        const busyStart = new Date(busy.start).getTime();
-        const busyEnd = new Date(busy.end).getTime();
+      return !busySlots.some((busy) => {
+        const busyStart = new Date((busy as {start:string,end:string}).start).getTime();
+        const busyEnd = new Date((busy as {start:string,end:string}).end).getTime();
 
         return (
           (interval.start.getTime() >= busyStart && interval.start.getTime() < busyEnd) || // Starts during a busy slot
@@ -75,9 +74,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // return { busySlots, availableSlots };
     res.status(200).json({ events: events.data.items as Event[],busySlots, availableSlots });
-  } catch (error: any) {
+  } catch (error : unknown) {
     // If the error is due to an expired access token, refresh it
-    if (error.response && error.response.status === 401) {
+    if ((error as any).response && (error as any).response.status === 401) {
       try {
         // Refresh the access token
         const { credentials } = await auth.refreshAccessToken();
@@ -97,11 +96,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           events: events.data.items as Event[], 
           newAccessToken: credentials.access_token 
         });
-      } catch (refreshError: any) {
-        res.status(500).json({ error: "Failed to refresh access token.", details: refreshError.message });
+      } catch (refreshError: unknown) {
+        res.status(500).json({ error: "Failed to refresh access token.", details: (refreshError as any).message });
       }
     } else {
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ error: (error as any).message });
     }
   }
 }

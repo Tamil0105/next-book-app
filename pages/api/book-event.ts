@@ -1,4 +1,4 @@
-import { google } from "googleapis";
+import { google, calendar_v3 } from "googleapis";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { Event } from "../../types";
 
@@ -12,7 +12,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       guests?: { email: string; phone?: string }[];
       location?: string;
     };
-   
   };
 
   if (!event || !event.summary || !event.start || !event.end) {
@@ -25,8 +24,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   );
 
   auth.setCredentials({
-    access_token:  process.env.GOOGLE_ACCESS_TOKEN,
-    refresh_token: process.env.GOOGLE_REFRESH_TOKEN
+    access_token: process.env.GOOGLE_ACCESS_TOKEN,
+    refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
   });
 
   const calendar = google.calendar({ version: "v3", auth });
@@ -41,12 +40,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     // Prepare event details
-    const attendees = event.guests?.map((guest:{email:string,phone:string}) => ({
+    const attendees = event.guests?.map((guest: { email: string; phone?: string }) => ({
       email: guest.email,
       comment: guest.phone ? `Phone: ${guest.phone}` : undefined,
     }));
 
-    const calendarEvent = {
+    const calendarEvent: calendar_v3.Schema$Event = {
       summary: event.summary,
       start: event.start,
       end: event.end,
@@ -55,22 +54,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     };
 
     // Insert the event into the calendar
-    const createdEvent = await (calendar as any).events.insert({
+    const createdEvent = await calendar.events.insert({
       calendarId: "primary",
-      resource: calendarEvent,
+      requestBody: calendarEvent,
     });
 
     res.status(201).json({ createdEvent: createdEvent.data });
   } catch (error: unknown) {
-    if ((error as any).code === 401) {
+    if ((error as Error).message === "401") {
       try {
         // Refresh the token and retry the request
         const { credentials } = await auth.refreshAccessToken();
         auth.setCredentials(credentials);
 
-        const retryEvent = await (calendar as any).events.insert({
+        const retryEvent = await calendar.events.insert({
           calendarId: "primary",
-          resource: event,
+          requestBody: event,
         });
 
         return res.status(201).json({ createdEvent: retryEvent.data });
@@ -79,7 +78,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(500).json({ error: "Failed to refresh access token." });
       }
     }
-    console.error("Error creating event:", (error as any).response);
-    return res.status(500).json({ error: (error as any).response });
+    console.error("Error creating event:", (error as Error).message);
+    return res.status(500).json({ error: (error as Error).message });
   }
 }

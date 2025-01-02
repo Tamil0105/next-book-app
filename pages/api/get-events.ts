@@ -1,15 +1,21 @@
-// pages/api/events.js
 import { google } from "googleapis";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { Event } from "../../types";
 
+interface BusySlot {
+  start: string;
+  end: string;
+}
+
+interface Interval {
+  start: Date;
+  end: Date;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { date, timeMin,
-    timeMax,
-    intervalMinutes } = req.query;
+  const { date, timeMin, timeMax, intervalMinutes } = req.query;
 
   if (!date) return res.status(400).json({ error: "Date is required." });
-
 
   const auth = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
@@ -17,24 +23,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   );
 
   auth.setCredentials({
-    access_token:  process.env.GOOGLE_ACCESS_TOKEN as any,
-    refresh_token:  process.env.GOOGLE_REFRESH_TOKEN as any,
+    access_token: process.env.GOOGLE_ACCESS_TOKEN,
+    refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
   });
 
   try {
-  //   const   timeMin = new Date(date as string).toISOString()
-  // const   timeMax=new Date(new Date(date as string).setDate(new Date(date as string).getDate() + 1)).toISOString()
-  // const intervalMinutes = 60
-    // Test the access token with a calendar request
     const calendar = google.calendar({ version: "v3", auth });
     const response = await calendar.freebusy.query({
       requestBody: {
-         timeMax:timeMax as string,
-         timeMin:timeMin as string,   
-        timeZone: "Asia/kolkata",
+        timeMax: timeMax as string,
+        timeMin: timeMin as string,
+        timeZone: "Asia/Kolkata",
         items: [{ id: "primary" }],
       },
     });
+
     const events = await calendar.events.list({
       calendarId: "primary",
       timeMin: new Date(date as string).toISOString(),
@@ -42,47 +45,45 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       singleEvents: true,
       orderBy: "startTime",
     });
-    //@ts-expect-error
- const busySlots = response.data.calendars["primary"].busy || [];
 
-    // Parse input time range
-    const startTime = new Date(timeMin as string ).getTime();
+    const busySlots: BusySlot[] = (response.data.calendars?.primary?.busy ?? []) as BusySlot[];
+
+    const startTime = new Date(timeMin as string).getTime();
     const endTime = new Date(timeMax as string).getTime();
 
-    // Generate all possible intervals within the range
-    const intervals: { start: Date; end: Date }[] = [];
-    for (let current = startTime; current < endTime; current += (intervalMinutes as any)  * 60 * 1000) {
+    const intervals: Interval[] = [];
+    for (let current = startTime; current < endTime; current += Number(intervalMinutes) * 60 * 1000) {
       intervals.push({
         start: new Date(current),
-        end: new Date(current + (intervalMinutes as any) * 60 * 1000),
+        end: new Date(current + Number(intervalMinutes) * 60 * 1000),
       });
     }
 
-    // Filter out intervals that overlap with busy slots
     const availableSlots = intervals.filter((interval) => {
       return !busySlots.some((busy) => {
-        const busyStart = new Date((busy as {start:string,end:string}).start).getTime();
-        const busyEnd = new Date((busy as {start:string,end:string}).end).getTime();
+        const busyStart = new Date(busy.start).getTime();
+        const busyEnd = new Date(busy.end).getTime();
 
         return (
-          (interval.start.getTime() >= busyStart && interval.start.getTime() < busyEnd) || // Starts during a busy slot
-          (interval.end.getTime() > busyStart && interval.end.getTime() <= busyEnd) || // Ends during a busy slot
-          (interval.start.getTime() <= busyStart && interval.end.getTime() >= busyEnd) // Completely overlaps
+          (interval.start.getTime() >= busyStart && interval.start.getTime() < busyEnd) || 
+          (interval.end.getTime() > busyStart && interval.end.getTime() <= busyEnd) || 
+          (interval.start.getTime() <= busyStart && interval.end.getTime() >= busyEnd)
         );
       });
     });
 
-    // return { busySlots, availableSlots };
-    res.status(200).json({ events: events.data.items as Event[],busySlots, availableSlots });
-  } catch (error : unknown) {
-    // If the error is due to an expired access token, refresh it
-    if ((error as any).response && (error as any).response.status === 401) {
+    res.status(200).json({ events: events.data.items as Event[], busySlots, availableSlots });
+  } catch (error: unknown) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "response" in error &&
+      (error.response as { status?: number })?.status === 401
+    ) {
       try {
-        // Refresh the access token
         const { credentials } = await auth.refreshAccessToken();
         auth.setCredentials(credentials);
 
-        // Retry the calendar request with the refreshed token
         const calendar = google.calendar({ version: "v3", auth });
         const events = await calendar.events.list({
           calendarId: "primary",
@@ -92,15 +93,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           orderBy: "startTime",
         });
 
-        res.status(200).json({ 
-          events: events.data.items as Event[], 
-          newAccessToken: credentials.access_token 
+        res.status(200).json({
+          events: events.data.items as Event[],
+          newAccessToken: credentials.access_token,
         });
       } catch (refreshError: unknown) {
-        res.status(500).json({ error: "Failed to refresh access token.", details: (refreshError as any).message });
+        res.status(500).json({
+          error: "Failed to refresh access token.",
+          details: refreshError instanceof Error ? refreshError.message : "Unknown error",
+        });
       }
     } else {
-      res.status(500).json({ error: (error as any).message });
+      res.status(500).json({
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
     }
   }
 }

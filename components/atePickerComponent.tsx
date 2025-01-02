@@ -8,7 +8,6 @@ interface Props {
 
 const DatePickerComponent: React.FC<Props> = ({ onDateChange }) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-
   return (
     <div className="p-10 bg-red-300">
       <h2 className="text-xl font-bold">Select a Date</h2>

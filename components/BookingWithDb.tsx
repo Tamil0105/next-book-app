@@ -140,7 +140,7 @@ const BookingWithDb = () => {
           paymentSessionId: sessionId,
           // redirectTarget:'next-app-iframe',
   
-          returnUrl: `${process.env.URL}/page/confirm/${userEmail}?&phoneNumber=${phoneNumber}&location=${userLocation}&date=${selectedDate}`,
+          returnUrl: `https://next-book-app-chi.vercel.app/page/confirm/${userEmail}?&phoneNumber=${phoneNumber}&location=${userLocation}&date=${selectedDate}`,
         }
   )
         .then(function (result: { error: { message: unknown }; redirect: unknown }) {

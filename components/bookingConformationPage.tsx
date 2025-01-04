@@ -40,7 +40,9 @@ const ConfirmationPage = ({
         if (!response.ok) {
           throw new Error("Failed to book the slot");
         }
-
+         localStorage.removeItem('selectedSlots')    
+         localStorage.removeItem('userLocation')     
+ 
         // const data = await response.json();
       } catch (error) {
         console.error("Error booking slot", error);

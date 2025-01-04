@@ -32,6 +32,8 @@ const ConfirmationPage: React.FC<{ onClick?: () => void }> = () => {
             })
           )
         );
+        localStorage.removeItem('selectedSlots')    
+        localStorage.removeItem('userLocation')   
         alert("Slots booked successfully!");
       } catch (error: unknown) {
         console.log(error)

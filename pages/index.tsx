@@ -1,5 +1,6 @@
 // import Image from "next/image";
 // import { Geist, Geist_Mono } from "next/font/google";
+import BookingWitDb from "@/components/BookingWithDb";
 import EventList from "@/components/EventList";
 
 // const geistSans = Geist({
@@ -14,10 +15,14 @@ import EventList from "@/components/EventList";
 
 export default function Home() {
   return (
- <div className="">
+    <div className="py-10">
+      <h1 className="text-4xl font-bold text-center  mb-6 text-blue-600">
+        Booking Your Slots
+      </h1>
 
-  <EventList  /> 
-  {/* <CustomButton/> */}
- </div>
+      <BookingWitDb />
+
+      <EventList  /> 
+    </div>
   );
 }

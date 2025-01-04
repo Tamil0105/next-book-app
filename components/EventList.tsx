@@ -170,6 +170,7 @@ const EventList = () => {
        
       {isModalOpen && (
         <Modal
+        selectedSlot={selectedSlot??{end:"",start:""}}
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onConfirm={(email, description, phoneNumber, location) => {

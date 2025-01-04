@@ -140,7 +140,7 @@ const BookingWithDb = () => {
           paymentSessionId: sessionId,
           // redirectTarget:'next-app-iframe',
   
-          returnUrl: `https://next-book-app-chi.vercel.app/page/confirm/${userEmail}?&phoneNumber=${phoneNumber}&location=${userLocation}&date=${selectedDate}`,
+          returnUrl: `https://next-book-app-chi.vercel.app/confirm/page/${userEmail}?&phoneNumber=${phoneNumber}&location=${userLocation}&date=${selectedDate}&name=${userName}`,
         }
   )
         .then(function (result: { error: { message: unknown }; redirect: unknown }) {
@@ -159,56 +159,7 @@ const BookingWithDb = () => {
       setBookingLoading(false)
     }
   };
-  //   const bookSlots = async () => {
-  //     const validationErrors = validateForm();
-  //     if (Object.keys(validationErrors).length > 0) {
-  //       setErrors(validationErrors);
-  //       return;
-  //     }
-  //     if (
-  //       !selectedDate ||
-  //       selectedSlots.length === 0 ||
-  //       !userName ||
-  //       !userEmail ||
-  //       !userLocation ||
-  //       !phoneNumber
-  //     ) {
-  //       alert("Please fill all fields and select at least one slot.");
-  //       return;
-  //     }
-
-  //     const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
-
-  //     try {
-  //       await Promise.all(
-  //         selectedSlots.map((slot) =>
-  //           axios.post("/api/db/book", {
-  //             date: formattedDate,
-  //             startTime: slot.startTime,
-  //             endTime: slot.endTime,
-  //             userName,
-  //             userEmail,
-  //             userLocation,
-  //  phoneNumber,
-  //           })
-  //         )
-  //       );
-  //       alert("Slots booked successfully!");
-  //       fetchSlots(selectedDate); // Refresh available slots
-  //       resetForm();
-  //     } catch (error: any) {
-  //       alert(error.response?.data?.error || "Error booking slots");
-  //     } finally {
-  //       setBookingLoading(false);
-  //     }
-  //   };
-
-  // const resetForm = () => {
-  //   setUserName("");
-  //   setUserEmail("");
-  //   setUserLocation("");
-  //   setSelectedSlots([]);
-  // };
+ 
 
   useEffect(() => {
     const storedLocation = localStorage.getItem("userLocation");

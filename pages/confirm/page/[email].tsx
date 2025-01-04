@@ -22,7 +22,7 @@ const ConfirmationPage: React.FC<{ onClick?: () => void }> = () => {
         await Promise.all(
           parsedSlots.map((slot) =>
             axios.post("/api/db/book", {
-              date: date,
+              date: new Date(date as string).toISOString(),
               startTime: slot.startTime,
               endTime: slot.endTime,
               userName: name,

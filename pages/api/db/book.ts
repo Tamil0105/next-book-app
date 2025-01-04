@@ -18,7 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const { date, startTime, endTime, userLocation,userName, phoneNumber,userEmail } = req.body;
 
-
+ console.log(date,startTime,endTime,userLocation,userName, phoneNumber,userEmail)
 
   // Validate the request body
   if (!date || !startTime || !endTime || !userName || !userEmail||!phoneNumber) {

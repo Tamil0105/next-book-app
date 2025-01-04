@@ -105,7 +105,6 @@ const EventList = () => {
   return (
     <div className="min-h-screen  p-4">
       <div className="max-w-full mx-auto bg-white  rounded-lg p-6">
-        <h3 className="text-xl font-bold mb-4 text-center">Book Your Turf Slot</h3>
 
         <div className="flex items-center justify-center border-b gap-4 p-2">
           <input
@@ -146,7 +145,6 @@ const EventList = () => {
           </div>
         ) : (
           <div className="py-5 px-10 ">
-          <h2 className="text-lg font-semibold mb-4">Available Slots</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {events.map((slot:{start:string,end:string}, index) => (
               <div

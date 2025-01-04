@@ -19,7 +19,7 @@ export default function Home() {
             activeComponent === "booking" ? "bg-blue-500 text-white" : "bg-gray-300 text-black"
           }`}
         >
-          Show Booking
+          Booking
         </button>
         <button
           onClick={() => setActiveComponent("event")}
@@ -27,7 +27,7 @@ export default function Home() {
             activeComponent === "event" ? "bg-blue-500 text-white" : "bg-gray-300 text-black"
           }`}
         >
-          Show Event List
+          Google Booking 
         </button>
       </div>
 

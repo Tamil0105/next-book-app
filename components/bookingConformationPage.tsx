@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
 
-interface ConfirmationPageProps {
-  email: string;
-  description: string;
-  phoneNumber: string;
-  location: string;
-  selectedSlot: { start: string; end: string } | null; // Adjust the type as needed
-}
+// interface ConfirmationPageProps {
+//   email: string;
+//   description: string;
+//   phoneNumber: string;
+//   location: string;
+//   selectedSlot: { start: string; end: string } | null; // Adjust the type as needed
+// }
 
 const ConfirmationPage = ({
 //   email,
@@ -41,7 +41,7 @@ const ConfirmationPage = ({
           throw new Error("Failed to book the slot");
         }
 
-        const data = await response.json();
+        // const data = await response.json();
       } catch (error) {
         console.error("Error booking slot", error);
         setError("Failed to book the slot. Please try again.");

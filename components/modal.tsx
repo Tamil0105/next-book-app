@@ -18,7 +18,7 @@ const Modal: React.FC<ModalProps> = ({
   isOpen,
   onClose,
   selectedSlot,
-  onConfirm,
+  // onConfirm,
 }) => {
   const [email, setEmail] = React.useState("");
   const [name, setName] = React.useState("");
@@ -26,7 +26,7 @@ const Modal: React.FC<ModalProps> = ({
   const [phoneNumber, setPhoneNumber] = React.useState("");
   const [location, setLocation] = React.useState("");
   const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
-  const [error, setError] = useState<boolean>(false);
+  // const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
 
   const locations = [
@@ -79,16 +79,15 @@ const Modal: React.FC<ModalProps> = ({
 
       const data = await response.json();
       const sessionId = data.data.payment_session_id;
-      let checkoutOptions = {
-        paymentSessionId: sessionId,
-        // redirectTarget:'next-app-iframe',
-
-        returnUrl: `http://localhost:3000/confirm/${email}?&phoneNumber=${phoneNumber}&location=${location}&start=${selectedSlot.start}&end=${selectedSlot.end}`,
-      };
 
       cashfree
-        .checkout(checkoutOptions)
-        .then(function (result: { error: { message: any }; redirect: any }) {
+        .checkout({
+          paymentSessionId: sessionId,
+          // redirectTarget:'next-app-iframe',
+  
+          returnUrl: `http://localhost:3000/confirm/${email}?&phoneNumber=${phoneNumber}&location=${location}&start=${selectedSlot.start}&end=${selectedSlot.end}`,
+        })
+        .then(function (result: { error: { message: unknown }; redirect: unknown }) {
           if (result.error) {
             alert(result.error.message);
           }
@@ -99,7 +98,7 @@ const Modal: React.FC<ModalProps> = ({
         });
     } catch (error) {
       console.error("Error initiating payment:", error);
-      setError(true);
+      // setError(true);
     } finally {
       setLoading(false);
     }

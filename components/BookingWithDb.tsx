@@ -30,7 +30,7 @@ const BookingWithDb = () => {
     userEmail?: string;
     phoneNumber?: string;
   }>({});
-  const [error, setError] = useState<boolean>(false);
+  // const [error, setError] = useState<boolean>(false);
 
   const locations = [
     "New York",
@@ -113,6 +113,7 @@ const BookingWithDb = () => {
       alert("Please fill all fields and select at least one slot.");
       return;
     }
+    setBookingLoading(true)
     setLoading(true);
     try {
       const response = await fetch("/api/payment/initiate", {
@@ -134,16 +135,15 @@ const BookingWithDb = () => {
 
       const data = await response.json();
       const sessionId = data.data.payment_session_id;
-      let checkoutOptions = {
-        paymentSessionId: sessionId,
-        // redirectTarget:'next-app-iframe',
-
-        returnUrl: `http://localhost:3000/page/confirm/${userEmail}?&phoneNumber=${phoneNumber}&location=${userLocation}&date=${selectedDate}`,
-      };
-
       cashfree
-        .checkout(checkoutOptions)
-        .then(function (result: { error: { message: any }; redirect: any }) {
+        .checkout({
+          paymentSessionId: sessionId,
+          // redirectTarget:'next-app-iframe',
+  
+          returnUrl: `http://localhost:3000/page/confirm/${userEmail}?&phoneNumber=${phoneNumber}&location=${userLocation}&date=${selectedDate}`,
+        }
+  )
+        .then(function (result: { error: { message: unknown }; redirect: unknown }) {
           if (result.error) {
             alert(result.error.message);
           }
@@ -153,9 +153,10 @@ const BookingWithDb = () => {
         });
     } catch (error) {
       console.error("Error initiating payment:", error);
-      setError(true);
+      // setError(true);
     } finally {
       setLoading(false);
+      setBookingLoading(false)
     }
   };
   //   const bookSlots = async () => {

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 
-const ConfirmationPage: React.FC<{ onClick?: () => void }> = ({ onClick }) => {
+const ConfirmationPage: React.FC<{ onClick?: () => void }> = () => {
   const [error, setError] = useState<string | null>(null);
   const [hasBooked, setHasBooked] = useState(false); // State to track if booking has been attempted
   const router = useRouter();
@@ -33,7 +33,8 @@ const ConfirmationPage: React.FC<{ onClick?: () => void }> = ({ onClick }) => {
           )
         );
         alert("Slots booked successfully!");
-      } catch (error: any) {
+      } catch (error: unknown) {
+        console.log(error)
         setError("Failed to book the slot. Please try again.");
       } finally {
         router.push("/");

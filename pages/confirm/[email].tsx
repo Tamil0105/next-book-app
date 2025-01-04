@@ -31,7 +31,7 @@ const ConfirmationPage = () => {
           throw new Error("Failed to book the slot");
         }
 
-        const data = await response.json();
+        // const data = await response.json();
         // Redirect to a success page or another route after successful booking
         router.push('/'); // Change '/success' to your desired route
       } catch (error) {

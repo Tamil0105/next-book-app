@@ -140,7 +140,7 @@ const BookingWithDb = () => {
           paymentSessionId: sessionId,
           // redirectTarget:'next-app-iframe',
   
-          returnUrl: `http://localhost:3000/page/confirm/${userEmail}?&phoneNumber=${phoneNumber}&location=${userLocation}&date=${selectedDate}`,
+          returnUrl: `${process.env.URL}/page/confirm/${userEmail}?&phoneNumber=${phoneNumber}&location=${userLocation}&date=${selectedDate}`,
         }
   )
         .then(function (result: { error: { message: unknown }; redirect: unknown }) {

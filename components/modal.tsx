@@ -85,7 +85,7 @@ const Modal: React.FC<ModalProps> = ({
           paymentSessionId: sessionId,
           // redirectTarget:'next-app-iframe',
   
-          returnUrl: `http://localhost:3000/confirm/${email}?&phoneNumber=${phoneNumber}&location=${location}&start=${selectedSlot.start}&end=${selectedSlot.end}`,
+          returnUrl: `${process.env.URL}/confirm/${email}?&phoneNumber=${phoneNumber}&location=${location}&start=${selectedSlot.start}&end=${selectedSlot.end}`,
         })
         .then(function (result: { error: { message: unknown }; redirect: unknown }) {
           if (result.error) {

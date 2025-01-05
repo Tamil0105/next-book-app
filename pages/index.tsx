@@ -3,7 +3,7 @@ import BookingWitDb from "@/components/BookingWithDb";
 import EventList from "@/components/EventList";
 
 export default function Home() {
-  const [activeComponent, setActiveComponent] = useState<"booking" | "event">("booking");
+  const [activeComponent] = useState<"booking" | "event">("booking");
 
   return (
     <div className="py-10">
@@ -12,7 +12,7 @@ export default function Home() {
       </h1>
 
       {/* Toggle Controls */}
-      <div className="flex justify-center gap-4 mb-6">
+      {/* <div className="flex justify-center gap-4 mb-6">
         <button
           onClick={() => setActiveComponent("booking")}
           className={`px-4 py-2 rounded ${
@@ -29,7 +29,7 @@ export default function Home() {
         >
           Google Booking 
         </button>
-      </div>
+      </div> */}
 
       {/* Conditionally Render Components */}
       {activeComponent === "booking" && <BookingWitDb />}

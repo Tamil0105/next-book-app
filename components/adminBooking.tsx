@@ -13,7 +13,6 @@ interface Slot {
 }
 
 const AdminBooking = () => {
-  const [error, setError] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
   const [selectedSlots, setSelectedSlots] = useState<
@@ -25,7 +24,6 @@ const AdminBooking = () => {
   const [userLocation, setUserLocation] = useState<string>("Los Angeles");
   const [peopleCount, setPeopleCount] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
-  const [bookingLoading, setBookingLoading] = useState<boolean>(false);
   
   const [errors, setErrors] = useState<{
     userName?: string;
@@ -105,12 +103,29 @@ const AdminBooking = () => {
   };
 
   const bookSlots = async () => {
-    const selectedSlots = localStorage.getItem("selectedSlots");
-    if (!selectedSlots) {
-      setError("No slots found in localStorage.");
+
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       return;
     }
-
+  
+    const selectedSlots = localStorage.getItem("selectedSlots");
+    if (!selectedSlots) {
+      toast.error("No slots found in localStorage.");
+      return;
+    }
+    if (
+        !selectedDate ||
+        selectedSlots.length === 0 ||
+        !userName ||
+        !userEmail ||
+        !userLocation ||
+        !phoneNumber
+      ) {
+        toast.error("Please fill all fields and select at least one slot.");
+        return;
+      }
     const parsedSlots = JSON.parse(selectedSlots) as { startTime: string; endTime: string }[];
     setLoading(true);
     try {
@@ -136,8 +151,8 @@ const AdminBooking = () => {
       localStorage.removeItem("userLocation");
       toast.success("Slots booked successfully!");
     } catch (error: unknown) {
+        console.log(error)
       toast.error('Failed to book the slot. Please try again.');
-      setError("Failed to book the slot. Please try again.");
     } finally {
         
       setLoading(false);

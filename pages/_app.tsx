@@ -3,7 +3,7 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { SessionProvider, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import toast, { Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 
 const noAuthRequiredRoutes = ["/", "/confirm/page/[email]","/auth/signin"]; // Public pages
 

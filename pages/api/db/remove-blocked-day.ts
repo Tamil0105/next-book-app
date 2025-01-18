@@ -28,6 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       await blockDaysRepository.remove(blockDay);
       res.status(200).json({ message: "Day removed successfully" });
     } catch (error) {
+        console.log(error)
       res.status(500).json({ error: "Internal server error" });
     }
   } else {

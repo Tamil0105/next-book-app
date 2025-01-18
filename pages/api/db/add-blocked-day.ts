@@ -40,6 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         blockedDays,
       });
     } catch (error) {
+        console.log(error)
       res.status(500).json({ error: "Internal server error" });
     }
   } else {

@@ -154,8 +154,8 @@ export default function AdminDashboard() {
   };
   const handleConfirmCancelBooking = async () => {
     if (selectedBooking) {
-
-        selectedBooking.orderId.startsWith('admin_create')?
+        //@typescript-eslint/no-unused-expressions
+     selectedBooking.orderId.startsWith('admin_create')?
       await handleCancelBookingWithoutRefund(
         selectedBooking.id,
       ):await handleCancelBookingWithRefund(
@@ -374,7 +374,7 @@ export default function AdminDashboard() {
     <p className="text-gray-500 italic">No blocked days available.</p>
   ) : (
     <ul className="list-disc pl-5 space-y-3">
-      {blockedDays.map((day, index) => (
+      {blockedDays.map((day) => (
         <li
           key={day.id}
           className="flex justify-between items-center bg-gray-50 p-3 rounded-lg shadow-sm hover:bg-gray-100 transition"

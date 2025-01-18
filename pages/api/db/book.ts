@@ -1,4 +1,4 @@
-import { Booking } from '@/entities/Booking';
+import { B } from '@/entities/Booking';
 import { AppDataSource } from '@/typeorm.config';
 import { NextApiRequest, NextApiResponse } from 'next';
 
@@ -36,7 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // const endTimeString = parsedEndTime.toTimeString().split(' ')[0].slice(0, 5); // HH:MM
 
     // Create a new booking instance
-    const booking = new Booking();
+    const booking = new B();
     booking.date = parsedDate.toISOString().split('T')[0]; // Store date in YYYY-MM-DD format
     booking.startTime = startTime // Store only the time
     booking.endTime = endTime; // Store only the time
@@ -52,7 +52,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 
     // Save the booking
-    await AppDataSource.getRepository(Booking).save(booking);
+    await AppDataSource.getRepository(B).save(booking);
 
     res.status(201).json({ message: 'Slot booked successfully', booking });
   } catch (error) {

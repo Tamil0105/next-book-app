@@ -1,4 +1,4 @@
-import { Booking } from '@/entities/Booking';
+import { B } from '@/entities/Booking';
 import { AppDataSource } from '@/typeorm.config';
 import { NextApiRequest, NextApiResponse } from 'next';
 
@@ -24,7 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const bookingRepository = AppDataSource.getRepository(Booking);
+    const bookingRepository = AppDataSource.getRepository(B);
 
     // Check if the booking exists
     const booking = await bookingRepository.findOne({ where: { id: Number(id) } });

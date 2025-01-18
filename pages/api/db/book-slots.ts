@@ -2,6 +2,28 @@ import { Booking } from "@/entities/Booking";
 import { AppDataSource } from "@/typeorm.config";
 import { NextApiRequest, NextApiResponse } from "next";
 
+
+type Slot = {
+  id: number;
+  date: string;
+  startTime: string;
+  endTime: string;
+};
+
+type GroupedBooking = {
+  id: number;
+  orderId: string;
+  date: string;
+  userName: string;
+  amount: string;
+  paymentStatus: string;
+  peopleCount: string;
+  phoneNumber: string;
+  userEmail: string;
+  userLocation: string;
+  slots: Slot[];
+};
+
 // Ensure the data source is initialized
 const initialize = async () => {
   if (!AppDataSource.isInitialized) {
@@ -32,7 +54,7 @@ export default async function handler(
         .getManyAndCount(); // Get both data and total count
 
       // Transform data: Group by order_id
-      const groupedData = bookings.reduce((acc, booking) => {
+      const groupedData = bookings.reduce<Record<string, GroupedBooking>>((acc, booking) => {
         const {
           id,
           orderId,
@@ -47,9 +69,7 @@ export default async function handler(
           phoneNumber,
           userEmail,
         } = booking;
-        //@ts-expect-error
         if (!acc[orderId]) {
-          //@ts-expect-error
           acc[orderId] = {
             id,
             orderId,
@@ -64,7 +84,6 @@ export default async function handler(
             slots: [],
           };
         }
-//@ts-expect-error
         acc[orderId].slots.push({
             id,
           date,

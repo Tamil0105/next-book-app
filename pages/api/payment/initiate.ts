@@ -91,10 +91,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       },
       body: JSON.stringify({
+    
         order_id: orderId,
         order_amount: orderAmount,
         order_currency: "INR",
         customer_details: customerDetails,
+        redirect_url: "https://example.com/return-url",
+        
       }),
     });
 

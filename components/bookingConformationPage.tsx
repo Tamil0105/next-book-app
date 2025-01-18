@@ -31,6 +31,8 @@ const ConfirmationPage = ({
       };
 
       try {
+
+        
         const response = await fetch("/api/book-event", {
           method: "POST",
           headers: { "Content-Type": "application/json" },

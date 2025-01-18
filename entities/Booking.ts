@@ -9,6 +9,9 @@ export class Booking {
   date!: string;
 
   @Column({ type: 'varchar', length: 255 })
+  paymentStatus!: string;
+
+  @Column({ type: 'varchar', length: 255 })
   startTime!: string;
 
   @Column({ type: 'varchar', length: 255 })
@@ -25,4 +28,13 @@ export class Booking {
 
   @Column({ type: 'varchar', length: 255 })
   phoneNumber!: string;
+
+  @Column({ type: 'bigint' })
+  amount!: string;
+
+  @Column({ type: 'bigint' })
+  peopleCount!: string;
+
+  @Column({ type: 'varchar', length: 255})
+  orderId!: string;
 }

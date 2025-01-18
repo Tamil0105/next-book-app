@@ -1,3 +1,4 @@
+import { BlockDays } from '@/entities';
 import { Booking } from '@/entities/Booking';
 import { AppDataSource } from '@/typeorm.config';
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -22,6 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!date || typeof date !== 'string') {
     return res.status(400).json({ error: 'Valid date is required' });
   }
+  const blockDaysRepository = AppDataSource.getRepository(BlockDays);
 
   try {
     // Parse the date to create a Date object
@@ -38,8 +40,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       where: { date,userLocation:userLocation as string },
     });
 
+    const blockDay = await blockDaysRepository.findOneBy({ date });
 
     // Calculate available slots
+   if(!blockDay){
     const availableSlots = allSlots.map((slot) => {
       const [hour, minute] = slot.split(':');
       const slotDate = new Date(parsedDate);
@@ -64,6 +68,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     res.status(200).json(availableSlots);
+   }else{
+    res.status(200).json([]);
+
+   }
   } catch (error) {
     console.error('Error fetching available slots:', error);
     res.status(500).json({ error: 'Internal server error' });

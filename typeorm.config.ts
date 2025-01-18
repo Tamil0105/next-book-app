@@ -1,5 +1,6 @@
 import { DataSource } from 'typeorm';
-import { Booking } from './entities/Booking';
+import { Booking, BlockDays } from './entities';
+
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -14,5 +15,5 @@ export const AppDataSource = new DataSource({
     rejectUnauthorized: false, // Use true for stricter validation
   },
   migrations: ['src/migrations/**/*.ts'], // Path to migrations
-  entities: [Booking],
+  entities: [Booking,BlockDays],
 });

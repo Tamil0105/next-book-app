@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const ConfirmationPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false); // State to track loading status
   const [hasBooked, setHasBooked] = useState(false); // State to track if booking has been attempted
   const router = useRouter();
-  const { email, name, phoneNumber, location, date } = router.query;
+  const { email, name, phoneNumber, amount, location, orderId, date,count } = router.query;
+
+
 
   useEffect(() => {
     const bookSlots = async () => {
@@ -18,32 +21,60 @@ const ConfirmationPage: React.FC = () => {
       }
 
       const parsedSlots = JSON.parse(selectedSlots) as { startTime: string; endTime: string }[];
-
       setLoading(true); // Start loading
       try {
-        await Promise.all(
-          parsedSlots.map((slot) =>
-            axios.post("/api/db/book", {
-              date: new Date(date as string).toISOString(),
-              startTime: slot.startTime,
-              endTime: slot.endTime,
-              userName: name,
-              userEmail: email,
-              userLocation: location,
-              phoneNumber,
-            })
-          )
-        );
-        localStorage.removeItem("selectedSlots");
-        localStorage.removeItem("userLocation");
-        alert("Slots booked successfully!");
+        // Fetch the payment confirmation
+        const response1 = await fetch(`/api/payment/confirm?orderId=${orderId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      
+        const paymentData = await response1.json(); // Parse the response JSON
+      
+        // Check if the payment status is 'paid'
+        if (paymentData.data.order_status === "PAID") {
+
+          console.log(11)
+          // Proceed with booking the slots
+          await Promise.all(
+            parsedSlots.map((slot) =>
+              axios.post("/api/db/book", {
+                date: new Date(date as string).toISOString(),
+                startTime: slot.startTime,
+                endTime: slot.endTime,
+                userName: name,
+                userEmail: email,
+                userLocation: location,
+                peopleCount: count,
+                paymentStatus:'PAID',
+                orderId:orderId,
+                amount,
+                phoneNumber,
+              })
+            )
+          );
+      
+          // Clear local storage and notify the user
+          localStorage.removeItem("selectedSlots");
+          localStorage.removeItem("userLocation");
+          toast.success("Slots booked successfully!")
+        } else {
+          // Payment not successful
+          toast.error("Payment not completed. Please complete the payment to book the slots.");
+          setError("Payment not completed. Please complete the payment to book the slots.");
+
+        }
       } catch (error: unknown) {
         console.error(error);
+        toast.error('Failed to book the slot. Please try again.')
         setError("Failed to book the slot. Please try again.");
       } finally {
         setLoading(false); // Stop loading
         router.push("/");
       }
+      
     };
 
     if (!hasBooked && phoneNumber && location && email) {

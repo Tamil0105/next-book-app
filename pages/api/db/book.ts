@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   await initialize();
 
-  const { date, startTime, endTime, userLocation,userName, phoneNumber,userEmail } = req.body;
+  const { date, startTime, endTime,amount,paymentStatus,orderId, userLocation,userName,peopleCount, phoneNumber,userEmail } = req.body;
 
  console.log(date,startTime,endTime,userLocation,userName, phoneNumber,userEmail)
 
@@ -43,7 +43,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     booking.userName = userName; // Store user name
     booking.userEmail = userEmail; // Store user email
     booking.userLocation = userLocation; // Store user email
-    booking.phoneNumber = phoneNumber; // Store user email
+    booking.phoneNumber = phoneNumber;
+    booking.peopleCount= peopleCount
+    booking.amount=amount;
+    booking.orderId=orderId
+    booking.paymentStatus=paymentStatus
 
 
 

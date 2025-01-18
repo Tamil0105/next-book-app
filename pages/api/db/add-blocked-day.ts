@@ -1,4 +1,4 @@
-import { BlockDays } from "@/entities";
+import { D } from "@/entities";
 import { AppDataSource } from "@/typeorm.config";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await AppDataSource.initialize();
   }
 
-  const blockDaysRepository = AppDataSource.getRepository(BlockDays);
+  const blockDaysRepository = AppDataSource.getRepository(D);
 
   if (req.method === "POST") {
     const { day } = req.body;

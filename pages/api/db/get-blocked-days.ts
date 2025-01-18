@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { AppDataSource } from "@/typeorm.config";
-import { BlockDays } from "@/entities/BlockDays";
+import { D } from "@/entities/BlockDays";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "GET") {
@@ -11,7 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       // Fetch blocked days from the database
-      const blockedDaysRepository = AppDataSource.getRepository(BlockDays);
+      const blockedDaysRepository = AppDataSource.getRepository(D);
       const blockedDays = await blockedDaysRepository.find();
 
       res.status(200).json({ blockedDays });

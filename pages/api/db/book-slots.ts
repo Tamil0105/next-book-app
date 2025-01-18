@@ -1,4 +1,4 @@
-import { Booking } from "@/entities/Booking";
+import { B } from "@/entities/Booking";
 import { AppDataSource } from "@/typeorm.config";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -47,7 +47,7 @@ export default async function handler(
         return res.status(400).json({ error: "Invalid page or limit value" });
       }
 
-      const [bookings, total] = await AppDataSource.getRepository(Booking)
+      const [bookings, total] = await AppDataSource.getRepository(B)
         .createQueryBuilder("booking")
         .skip((pageNumber - 1) * pageSize)
         .take(pageSize)

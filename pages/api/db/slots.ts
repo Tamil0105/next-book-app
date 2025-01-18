@@ -1,5 +1,4 @@
-import { BlockDays } from '@/entities';
-import { Booking } from '@/entities/Booking';
+import { D,B } from '@/entities';
 import { AppDataSource } from '@/typeorm.config';
 import { NextApiRequest, NextApiResponse } from 'next';
 
@@ -23,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!date || typeof date !== 'string') {
     return res.status(400).json({ error: 'Valid date is required' });
   }
-  const blockDaysRepository = AppDataSource.getRepository(BlockDays);
+  const blockDaysRepository = AppDataSource.getRepository(D);
 
   try {
     // Parse the date to create a Date object
@@ -36,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const allSlots = Array.from({ length: 10 }, (_, i) => `${8 + i}:00`);
 
     // Fetch bookings for the given date
-    const bookings = await AppDataSource.getRepository(Booking).find({
+    const bookings = await AppDataSource.getRepository(B).find({
       where: { date,userLocation:userLocation as string },
     });
 

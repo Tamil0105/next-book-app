@@ -97,6 +97,8 @@ export default async function handler(
       // Convert grouped data object to an array
       const result = Object.values(groupedData);
 
+      console.log(result)
+
       res.status(200).json({
         bookings: result,
         total,

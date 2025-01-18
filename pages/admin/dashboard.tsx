@@ -153,19 +153,20 @@ export default function AdminDashboard() {
     setSelectedBooking(null);
   };
   const handleConfirmCancelBooking = async () => {
+
     if (selectedBooking) {
-        //@typescript-eslint/no-unused-expressions
-     selectedBooking.orderId.startsWith('admin_create')?
-      await handleCancelBookingWithoutRefund(
-        selectedBooking.id,
-      ):await handleCancelBookingWithRefund(
-        selectedBooking.id,
-        selectedBooking.orderId,
-        selectedBooking.amount
-      )
+      if (selectedBooking.orderId.startsWith('admin_create')) {
+        await handleCancelBookingWithoutRefund(selectedBooking.id);
+      } else {
+        await handleCancelBookingWithRefund(
+          selectedBooking.id,
+          selectedBooking.orderId,
+          selectedBooking.amount
+        );
+      }
       handleCloseCancelBookingModal();
     }
-  };
+  }    
   const handleBlockDay = async () => {
     if (!newBlockedDay) return;
 

@@ -1,4 +1,3 @@
-//@ts-nocheck
 import { Booking } from "@/entities/Booking";
 import { AppDataSource } from "@/typeorm.config";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -48,7 +47,9 @@ export default async function handler(
           phoneNumber,
           userEmail,
         } = booking;
+        //@ts-expect-error
         if (!acc[orderId]) {
+          //@ts-expect-error
           acc[orderId] = {
             id,
             orderId,
@@ -63,7 +64,7 @@ export default async function handler(
             slots: [],
           };
         }
-
+//@ts-expect-error
         acc[orderId].slots.push({
             id,
           date,

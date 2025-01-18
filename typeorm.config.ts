@@ -4,11 +4,11 @@ import { Booking, BlockDays } from './entities';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
-  host: 'pg-29b44638-chysir-8ac8.b.aivencloud.com',
-  port: 17179,
-  username: 'avnadmin',
-  password: 'AVNS_RHBrSm2RmeRDWqaO1sh',
-  database: 'defaultdb',
+  host: 'aws-0-ap-south-1.pooler.supabase.com',
+  port: 6543,
+  username: 'postgres.mrkrdjmdwoojbvkoicyn',
+  password: 'durBTBqPWFVOAfkP',
+  database: 'postgres',
   synchronize: true,
   logging: true,
   ssl: {
@@ -17,3 +17,4 @@ export const AppDataSource = new DataSource({
   migrations: ['src/migrations/**/*.ts'], // Path to migrations
   entities: [Booking,BlockDays],
 });
+// postgresql://postgres.mrkrdjmdwoojbvkoicyn:durBTBqPWFVOAfkP@aws-0-ap-south-1.pooler.supabase.com:6543/postgres?pgbouncer=true

@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import { Booking, BlockDays } from './entities';
+import { Booking, BlockedDays } from './entities';
 
 
 export const AppDataSource = new DataSource({
@@ -9,13 +9,13 @@ export const AppDataSource = new DataSource({
   username: 'postgres.mrkrdjmdwoojbvkoicyn',
   password: 'durBTBqPWFVOAfkP',
   database: 'postgres',
-  synchronize: true,
+  synchronize: false,
   logging: true,
   ssl: {
     rejectUnauthorized: false, // Use true for stricter validation
   },
   migrations: ['src/migrations/**/*.ts'], // Path to migrations
-  entities: [Booking,BlockDays],
+  entities: [Booking,BlockedDays],
 });
 // postgresql://postgres.mrkrdjmdwoojbvkoicyn:durBTBqPWFVOAfkP@aws-0-ap-south-1.pooler.supabase.com:6543/postgres?pgbouncer=true
 

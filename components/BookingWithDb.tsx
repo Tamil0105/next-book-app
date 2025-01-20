@@ -504,7 +504,7 @@ const BookingWithDb = () => {
         .checkout({
           paymentSessionId: sessionId,
           redirectTarget: "_self",
-          returnUrl: `http://localhost:3000/confirm/page/${userEmail}?orderId={order_id}&status={order_status}&start=${startTime}&end=${endTime}&phoneNumber=${phoneNumber}&location=${userLocation}&date=${selectedDate}&name=${userName}&count=${peopleCount}&amount=${orderAmount}`,
+          returnUrl: `${process.env.URL}/confirm/page/${userEmail}?orderId={order_id}&status={order_status}&start=${startTime}&end=${endTime}&phoneNumber=${phoneNumber}&location=${userLocation}&date=${selectedDate}&name=${userName}&count=${peopleCount}&amount=${orderAmount}`,
         })
         .then(function (result: { error: { message: unknown }; redirect: unknown }) {
           if (result.error) {

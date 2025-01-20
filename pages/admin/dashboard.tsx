@@ -1,10 +1,14 @@
 import { useSession } from "next-auth/react";
 import LogoutButton from "@/components/LogoutButton";
 import { useEffect, useState } from "react";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import router from "next/router";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { Button, DatePicker, DatePickerProps, TimePicker } from "antd";
+import BookingsTable from "@/components/BookingTable";
+import MyPagination from "@/components/pagination";
+import ManageBlockedDays from "@/components/MangeBookingDays";
 
 type Booking = {
   id: string; // Assuming each booking has a unique ID
@@ -32,14 +36,14 @@ const Modal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex overflow-auto  px-56  items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white  rounded-lg p-4 shadow-lg">
-        <button
-          onClick={onClose}
-          className="absolute top-2 right-2 text-gray-500"
-        >
-          &times;
-        </button>
+    <div
+      className="fixed inset-0 flex overflow-auto bg-black bg-opacity-50 justify-center items-center"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-lg p-4 shadow-lg w-full max-w-md"
+        onClick={(e) => e.stopPropagation()}
+      >
         {children}
       </div>
     </div>
@@ -50,7 +54,9 @@ export default function AdminDashboard() {
   const { data: session } = useSession();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
-  const [blockedDays, setBlockedDays] = useState<{id:number,date:string}[]>([]);
+  const [blockedDays, setBlockedDays] = useState<
+    { id: number; date: string }[]
+  >([]);
   const [newBlockedDay, setNewBlockedDay] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -59,25 +65,37 @@ export default function AdminDashboard() {
   const [isCancelBookingModalOpen, setCancelBookingModalOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
 
+  const onChange: DatePickerProps<Dayjs[]>["onChange"] = (date, dateString) => {
+    console.log(date, dateString);
+  };
 
+  const defaultValue = [
+    dayjs("2000-01-01"),
+    dayjs("2000-01-03"),
+    dayjs("2000-01-05"),
+  ];
+  const startTime = dayjs("12:08:23", "HH:mm:ss");
+  const endTime = dayjs("12:08:23", "HH:mm:ss");
+  const format = "HH:mm:ss";
 
-    const fetchBookings = async (page: number, limit: number) => {
-        try {
-          const response = await fetch(`/api/db/book-slots?page=${page}&limit=${limit}`);
-          if (!response.ok) {
-            throw new Error("Failed to fetch bookings");
-          }
-          const data = await response.json();
-          setBookings(data.bookings);
-          setTotalPages(data.totalPages);
-        } catch (error) {
-          console.error(error);
-        } finally {
-          setLoading(false);
-        }
-      };
+  const fetchBookings = async (page: number, limit: number) => {
+    try {
+      const response = await fetch(
+        `/api/db/book-slots?page=${page}&limit=${limit}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch bookings");
+      }
+      const data = await response.json();
+      setBookings(data.bookings);
+      setTotalPages(data.totalPages);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
- 
   const handleCancelBookingWithRefund = async (
     bookingId: string,
     orderId: string,
@@ -102,16 +120,14 @@ export default function AdminDashboard() {
       await axios.delete(`/api/db/remove-book-order-id`, {
         params: { orderId: orderId },
       });
-      toast.success("Removed Successfully")
+      toast.success("Removed Successfully");
       setBookings(bookings.filter((booking) => booking.id !== bookingId));
     } catch (error) {
       console.error(error);
     }
   };
-  const handleCancelBookingWithoutRefund = async (
-    bookingId: string,
-  ) => {
-    console.log(bookingId,"ppp")
+  const handleCancelBookingWithoutRefund = async (bookingId: string) => {
+    console.log(bookingId, "ppp");
     try {
       await axios.delete(`/api/db/remove-booking`, {
         params: { id: bookingId },
@@ -132,17 +148,15 @@ export default function AdminDashboard() {
       });
       const data = await response.json();
       if (!response.ok) {
-        toast.error(data.error)
+        toast.error(data.error);
         throw new Error("Failed to remove blocked day");
       }
-      setBlockedDays(blockedDays.filter((d) => d.date!== day));
+      setBlockedDays(blockedDays.filter((d) => d.date !== day));
     } catch (error) {
       console.error(error);
     }
   };
-  
 
- 
   const handleOpenCancelBookingModal = (booking: Booking) => {
     setSelectedBooking(booking);
     setCancelBookingModalOpen(true);
@@ -153,9 +167,8 @@ export default function AdminDashboard() {
     setSelectedBooking(null);
   };
   const handleConfirmCancelBooking = async () => {
-
     if (selectedBooking) {
-      if (selectedBooking.orderId.startsWith('admin_create')) {
+      if (selectedBooking.orderId.startsWith("admin_create")) {
         await handleCancelBookingWithoutRefund(selectedBooking.id);
       } else {
         await handleCancelBookingWithRefund(
@@ -166,12 +179,10 @@ export default function AdminDashboard() {
       }
       handleCloseCancelBookingModal();
     }
-  }    
+  };
   const handleBlockDay = async () => {
     if (!newBlockedDay) return;
 
-
-  
     try {
       const response = await fetch("/api/db/add-blocked-day", {
         method: "POST",
@@ -183,7 +194,7 @@ export default function AdminDashboard() {
       const data = await response.json();
 
       if (!response.ok) {
-        toast.error(data.error)
+        toast.error(data.error);
         throw new Error("Failed to block day");
       }
       setBlockedDays(data.blockedDays);
@@ -192,7 +203,7 @@ export default function AdminDashboard() {
       console.error(error);
     }
   };
-  
+
   useEffect(() => {
     const fetchBlockedDays = async () => {
       try {
@@ -201,24 +212,24 @@ export default function AdminDashboard() {
           throw new Error("Failed to fetch blocked days");
         }
         const data = await response.json();
-        console.log(data.blockedDays)
+        console.log(data.blockedDays);
         setBlockedDays(data.blockedDays);
       } catch (error) {
         console.error(error);
       }
     };
-  
+
     fetchBlockedDays();
   }, []);
   useEffect(() => {
-  fetchBookings(page, limit);
-}, [page, limit]);
+    fetchBookings(page, limit);
+  }, [page, limit]);
   return (
     <div className="flex flex-col min-h-screen">
       {/* Navbar */}
       <nav className="bg-gray-800 sticky z-30 top-0 text-white p-4">
         <div className=" container mx-auto flex justify-between items-center">
-          <h1 className="text-lg font-bold">Admin Dashboard</h1>
+          <h1 className="text-lg text-white font-bold">Admin Dashboard</h1>
           <LogoutButton />
         </div>
       </nav>
@@ -229,50 +240,65 @@ export default function AdminDashboard() {
         </h2>
         <div className="flex  justify-between">
           <h2 className="text-lg font-semibold mb-2">Bookings</h2>
-          <button
-            onClick={() =>{
-             router.push("/admin/booking");
-
+          <Button
+            onClick={() => {
+              router.push("/admin/booking");
             }}
             className="mb-4 bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 transition"
           >
             Create Booking
+          </Button>
+        </div>
+        <MyPagination
+          page={page}
+          totalPages={totalPages}
+          setPage={(value) => setPage(value)}
+          limit={limit}
+          setLimit={(value) => setLimit(value)}
+        />
+
+        <BookingsTable
+          loading={loading}
+          bookings={bookings}
+          handleOpenCancelBookingModal={(booking: Booking) =>
+            handleOpenCancelBookingModal(booking)
+          }
+        />
+
+<ManageBlockedDays/>
+      
+      </div>
+
+      <Modal
+        isOpen={isCancelBookingModalOpen}
+        onClose={handleCloseCancelBookingModal}
+      >
+        <h2 className="text-lg font-semibold mb-2">Confirm Cancellation</h2>
+        <p>
+          Are you sure you want to cancel the booking for{" "}
+          {selectedBooking?.userName}?
+        </p>
+        <div className="flex justify-end mt-4">
+          <button
+            onClick={handleCloseCancelBookingModal}
+            className="mr-2 text-gray-500 hover:underline"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleConfirmCancelBooking}
+            className="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600 transition"
+          >
+            Confirm
           </button>
         </div>
-        <div className="flex justify-between mb-4">
-  <div className="flex gap-2 border rounded-lg">
-    <button
-      onClick={() => setPage(page - 1)}
-      disabled={page === 1}
-      className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l"
-    >
-      Prev
-    </button>
+      </Modal>
+    </div>
+  );
+}
 
-    <p className="flex items-center  text-center">{page}</p>
-    <button
-      onClick={() => setPage(page + 1)}
-      disabled={page === totalPages}
-      className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r"
-    >
-      Next
-    </button>
-
-  
-  </div>
-  <div>
-    <select
-      value={limit}
-      onChange={(e) => setLimit(parseInt(e.target.value))}
-      className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
-    >
-      <option value={5}>5</option>
-      <option value={10}>10</option>
-      <option value={15}>15</option>
-    </select>
-  </div>
-</div>
-        <div className="mt-4">
+{
+  /* <div className="mt-4">
           {loading ? (
             <p>Loading bookings...</p>
           ) : bookings.length === 0 ? (
@@ -353,73 +379,5 @@ export default function AdminDashboard() {
               </table>
             </div>
           )}
-        </div>
-
-        <div className="mt-6 bg-white shadow-md rounded-lg p-6">
-  <h2 className="text-xl font-bold mb-4 text-gray-800 border-b pb-2">Manage Blocked Days</h2>
-  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-    <input
-      type="date"
-      value={newBlockedDay}
-      onChange={(e) => setNewBlockedDay(e.target.value)}
-      className="border border-gray-300 rounded px-4 py-2 text-gray-700 focus:outline-none focus:ring focus:ring-green-300 mb-4 sm:mb-0 sm:mr-4 w-full sm:w-auto"
-    />
-    <button
-      onClick={handleBlockDay}
-      className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition w-full sm:w-auto"
-    >
-     Add  Day
-    </button>
-  </div>
-  {!blockedDays || blockedDays.length === 0 ? (
-    <p className="text-gray-500 italic">No blocked days available.</p>
-  ) : (
-    <ul className="list-disc pl-5 space-y-3">
-      {blockedDays.map((day) => (
-        <li
-          key={day.id}
-          className="flex justify-between items-center bg-gray-50 p-3 rounded-lg shadow-sm hover:bg-gray-100 transition"
-        >
-          <span className="text-gray-800 font-medium">{day.date}</span>
-          <button
-            onClick={() => handleRemoveBlockedDay(day.date)}
-            className="text-red-500 hover:text-red-600 hover:underline"
-          >
-            Remove
-          </button>
-        </li>
-      ))}
-    </ul>
-  )}
-</div>
-
-      </div>
-
-    
-      <Modal
-        isOpen={isCancelBookingModalOpen}
-        onClose={handleCloseCancelBookingModal}
-      >
-        <h2 className="text-lg font-semibold mb-2">Confirm Cancellation</h2>
-        <p>
-          Are you sure you want to cancel the booking for{" "}
-          {selectedBooking?.userName}?
-        </p>
-        <div className="flex justify-end mt-4">
-          <button
-            onClick={handleCloseCancelBookingModal}
-            className="mr-2 text-gray-500 hover:underline"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleConfirmCancelBooking}
-            className="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600 transition"
-          >
-            Confirm
-          </button>
-        </div>
-      </Modal>
-    </div>
-  );
+        </div> */
 }

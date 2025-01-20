@@ -8,19 +8,14 @@ const ConfirmationPage: React.FC = () => {
   const [loading, setLoading] = useState(false); // State to track loading status
   const [hasBooked, setHasBooked] = useState(false); // State to track if booking has been attempted
   const router = useRouter();
-  const { email, name, phoneNumber, amount, location, orderId, date,count } = router.query;
+  const { email, name, phoneNumber, start,end, amount, location, orderId, date,count } = router.query;
 
 
 
   useEffect(() => {
     const bookSlots = async () => {
-      const selectedSlots = localStorage.getItem("selectedSlots");
-      if (!selectedSlots) {
-        setError("No slots found in localStorage.");
-        return;
-      }
+    
 
-      const parsedSlots = JSON.parse(selectedSlots) as { startTime: string; endTime: string }[];
       setLoading(true); // Start loading
       try {
         // Fetch the payment confirmation
@@ -38,12 +33,10 @@ const ConfirmationPage: React.FC = () => {
 
           console.log(11)
           // Proceed with booking the slots
-          await Promise.all(
-            parsedSlots.map((slot) =>
-              axios.post("/api/db/book", {
-                date: new Date(date as string).toISOString(),
-                startTime: slot.startTime,
-                endTime: slot.endTime,
+          await axios.post("/api/db/book", {
+                date: start,
+                startTime: start,
+                endTime: end,
                 userName: name,
                 userEmail: email,
                 userLocation: location,
@@ -53,8 +46,8 @@ const ConfirmationPage: React.FC = () => {
                 amount,
                 phoneNumber,
               })
-            )
-          );
+          
+          ;
       
           // Clear local storage and notify the user
           localStorage.removeItem("selectedSlots");

@@ -1,11 +1,10 @@
 import { useSession } from "next-auth/react";
 import LogoutButton from "@/components/LogoutButton";
 import { useEffect, useState } from "react";
-import dayjs, { Dayjs } from "dayjs";
 import router from "next/router";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { Button, DatePickerProps } from "antd";
+import { Button } from "antd";
 import BookingsTable from "@/components/BookingTable";
 import MyPagination from "@/components/pagination";
 import ManageBlockedDays from "@/components/MangeBookingDays";
@@ -54,10 +53,7 @@ export default function AdminDashboard() {
   const { data: session } = useSession();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
-  const [blockedDays, setBlockedDays] = useState<
-    { id: number; date: string }[]
-  >([]);
-  const [newBlockedDay, setNewBlockedDay] = useState("");
+
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
@@ -155,23 +151,7 @@ export default function AdminDashboard() {
   };
  
 
-  useEffect(() => {
-    const fetchBlockedDays = async () => {
-      try {
-        const response = await fetch("/api/db/get-blocked-days");
-        if (!response.ok) {
-          throw new Error("Failed to fetch blocked days");
-        }
-        const data = await response.json();
-        console.log(data.blockedDays);
-        setBlockedDays(data.blockedDays);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchBlockedDays();
-  }, []);
+  
   useEffect(() => {
     fetchBookings(page, limit);
   }, [page, limit]);

@@ -1,4 +1,4 @@
-import AdminBooking from '@/components/adminBooking'
+// import AdminBooking from '@/components/adminBooking'
 import React from 'react'
 
 const Booking = () => {

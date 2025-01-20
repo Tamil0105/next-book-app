@@ -282,8 +282,12 @@ const ManageBlockedDays: React.FC = () => {
               <DatePicker.RangePicker
                 format="YYYY-MM-DD"
                 disabledDate={disableDate}
-                //@ts-ignore
-                onChange={handleDateRangeChange}
+                onChange={(dates) => {
+                  // Check if dates is an array and handle accordingly
+                  if (dates && dates.length === 2) {
+                    handleDateRangeChange(dates as [Dayjs, Dayjs]); // Pass the selected dates to the handler
+                  }
+                }}
                 placeholder={["Start Date", "End Date"]}
                 value={[
                   dayjs(blockedDaysConfig.dateRange.start),

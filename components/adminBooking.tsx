@@ -19,7 +19,6 @@ interface BlockedDays {
   dateRange: { start: string; end: string };
 }
 
-const dateFormat = "YYYY-MM-DD";
 
 const AdminBooking = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);

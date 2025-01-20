@@ -5,7 +5,7 @@ import dayjs, { Dayjs } from "dayjs";
 import router from "next/router";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { Button, DatePicker, DatePickerProps, TimePicker } from "antd";
+import { Button, DatePickerProps } from "antd";
 import BookingsTable from "@/components/BookingTable";
 import MyPagination from "@/components/pagination";
 import ManageBlockedDays from "@/components/MangeBookingDays";
@@ -65,18 +65,9 @@ export default function AdminDashboard() {
   const [isCancelBookingModalOpen, setCancelBookingModalOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
 
-  const onChange: DatePickerProps<Dayjs[]>["onChange"] = (date, dateString) => {
-    console.log(date, dateString);
-  };
 
-  const defaultValue = [
-    dayjs("2000-01-01"),
-    dayjs("2000-01-03"),
-    dayjs("2000-01-05"),
-  ];
-  const startTime = dayjs("12:08:23", "HH:mm:ss");
-  const endTime = dayjs("12:08:23", "HH:mm:ss");
-  const format = "HH:mm:ss";
+
+ 
 
   const fetchBookings = async (page: number, limit: number) => {
     try {
@@ -137,25 +128,7 @@ export default function AdminDashboard() {
       console.error(error);
     }
   };
-  const handleRemoveBlockedDay = async (day: string) => {
-    try {
-      const response = await fetch("/api/db/remove-blocked-day", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ day }),
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        toast.error(data.error);
-        throw new Error("Failed to remove blocked day");
-      }
-      setBlockedDays(blockedDays.filter((d) => d.date !== day));
-    } catch (error) {
-      console.error(error);
-    }
-  };
+ 
 
   const handleOpenCancelBookingModal = (booking: Booking) => {
     setSelectedBooking(booking);
@@ -180,29 +153,7 @@ export default function AdminDashboard() {
       handleCloseCancelBookingModal();
     }
   };
-  const handleBlockDay = async () => {
-    if (!newBlockedDay) return;
-
-    try {
-      const response = await fetch("/api/db/add-blocked-day", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ day: newBlockedDay }),
-      });
-      const data = await response.json();
-
-      if (!response.ok) {
-        toast.error(data.error);
-        throw new Error("Failed to block day");
-      }
-      setBlockedDays(data.blockedDays);
-      setNewBlockedDay("");
-    } catch (error) {
-      console.error(error);
-    }
-  };
+ 
 
   useEffect(() => {
     const fetchBlockedDays = async () => {

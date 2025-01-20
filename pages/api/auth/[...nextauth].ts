@@ -11,7 +11,6 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        var U;
  return (await fetch(`${process.env.URL}/api/db/manage-days`)).json().then((res) =>{
           console.log(res,"ooo")
            if (!credentials) return null;
@@ -28,7 +27,6 @@ export const authOptions: NextAuthOptions = {
 
         });
 
-        console.log(U,"ll")
 
       
 

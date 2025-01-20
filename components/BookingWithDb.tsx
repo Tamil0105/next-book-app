@@ -350,7 +350,6 @@ interface BlockedDays {
   dateRange: { start: string; end: string };
 }
 
-const dateFormat = "YYYY-MM-DD";
 
 const BookingWithDb = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -524,46 +523,7 @@ const BookingWithDb = () => {
     }
   };
 
-  const bookSlot = async () => {
-    const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-
-    if (!selectedSlot || !selectedDate) {
-      toast.error("Please select a slot and date.");
-      return;
-    }
-
-    const startTime = selectedSlot.startTime;
-    const endTime = dayjs(startTime).add(duration, "hour").toISOString();
-
-    setLoading(true);
-    try {
-      await axios.post("/api/db/book", {
-        date: startTime,
-        startTime,
-        endTime,
-        userName,
-        userEmail,
-        userLocation,
-        peopleCount,
-        paymentStatus: "PAID",
-        orderId: `admin_create_${new Date().getTime()}`,
-        amount: calculateTotalAmount(), // Use the calculated amount
-        phoneNumber,
-      });
-
-      toast.success("Slot booked successfully!");
-      router.push("/admin/dashboard");
-    } catch (error) {
-      console.error("Failed to book the slot:", error);
-      toast.error("Failed to book the slot. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+ ;
 
   useEffect(() => {
     if (selectedDate) {

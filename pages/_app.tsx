@@ -4,6 +4,8 @@ import type { AppProps } from "next/app";
 import { SessionProvider, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { Toaster } from 'react-hot-toast';
+import { ConfigProvider } from "antd";
+import theme from "./theme/themeConfig";
 
 const noAuthRequiredRoutes = ["/", "/confirm/page/[email]","/auth/signin"]; // Public pages
 
@@ -14,6 +16,9 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <SessionProvider session={pageProps.session}>
+        <ConfigProvider theme={theme}>
+          
+
       {isPublicRoute ? (
         <Component {...pageProps} />
       ) : (
@@ -22,6 +27,7 @@ export default function App({ Component, pageProps }: AppProps) {
         </ProtectedRoute>
       )}
             <Toaster  />
+            </ConfigProvider>
 
     </SessionProvider>
   );
